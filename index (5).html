@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>SQA English · A1 Vocabulary</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet" />
+<style>
+  /* ============================================================
+     SQA English — A1 Vocabulary Study Tool
+     Single-file HTML. Built for GitHub Pages hosting.
+     ------------------------------------------------------------
+     HOW TO ADD / EDIT VOCABULARY:  see the SETS array in the
+     <script> block far below. Each set is plain data — no code
+     knowledge needed to add words.
+     ------------------------------------------------------------
+     IMAGES: image-based sets reference files in an  images/
+     folder next to this HTML file. Until images exist, the tool
+     shows the word itself as a clear text fallback, so every
+     mode still works today.
+     ------------------------------------------------------------
+     GOOGLE FORM: see the FORM_CONFIG block. Paste the A1 Form's
+     entry IDs there to turn on score reporting. Until then the
+     tool runs fully; it just skips the report step.
+     ============================================================ */
+
+  :root {
+    --bg: #f4f1ea;
+    --ink: #1d2421;
+    --paper: #fffdf7;
+    --line: #d8d2c2;
+    --moss: #2f5d4e;
+    --moss-lt: #e3ede8;
+    --clay: #bf5a36;
+    --gold: #caa24a;
+    --dim: #7a7568;
+    --font-display: 'Fraunces', Georgia, serif;
+    --font-body: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
+  body {
+    font-family: var(--font-body);
+    background: var(--bg);
+    color: var(--ink);
+    background-image:
+      radial-gradient(circle at 100% 0%, rgba(202,162,74,.10), transparent 45%),
+      radial-gradient(circle at 0% 100%, rgba(47,93,78,.08), transparent 42%);
+    min-height: 100%;
+    -webkit-font-smoothing: antialiased;
+  }
+  ::selection { background: var(--gold); color: var(--ink); }
+  button { font-family: var(--font-body); cursor: pointer; border: none;
+    transition: transform .12s ease, box-shadow .14s ease, background .15s ease, color .15s ease, border-color .15s ease; }
+  button:active { transform: translateY(1px); }
+
+  .wrap { max-width: 760px; margin: 0 auto; padding: 0 22px 64px; }
+
+  header {
+    border-bottom: 1.5px solid var(--line);
+    padding: 22px 22px 16px;
+    display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap;
+    max-width: 760px; margin: 0 auto;
+  }
+  .logo {
+    font-family: var(--font-display); font-size: 24px; font-weight: 600;
+    letter-spacing: -.01em; background: none; color: var(--ink); padding: 0;
+  }
+  .crumb { color: var(--dim); font-size: 13px; font-weight: 500; }
+  .pill {
+    margin-left: auto; font-size: 12px; color: var(--moss);
+    background: var(--moss-lt); padding: 5px 11px; border-radius: 20px; font-weight: 600;
+  }
+
+  h1.page {
+    font-family: var(--font-display); font-size: 33px; font-weight: 600;
+    line-height: 1.15; letter-spacing: -.02em; margin: 32px 0 8px;
+  }
+  p.lead { color: var(--dim); font-size: 15px; margin-bottom: 26px; max-width: 540px; }
+
+  /* set list */
+  .set-card {
+    width: 100%; text-align: left; background: var(--paper);
+    border: 1.5px solid var(--line); border-radius: 16px; padding: 18px 20px;
+    display: flex; align-items: center; gap: 16px; margin-bottom: 12px;
+    box-shadow: 0 1px 0 rgba(0,0,0,.02);
+  }
+  .set-card:hover { transform: translateY(-2px); box-shadow: 0 10px 22px rgba(29,36,33,.10); border-color: var(--moss); }
+  .set-badge {
+    width: 44px; height: 44px; border-radius: 11px; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-display); font-size: 20px; font-weight: 700; color: #fff;
+  }
+  .set-name { font-family: var(--font-display); font-size: 18px; font-weight: 600; }
+  .set-meta { color: var(--dim); font-size: 13px; margin-top: 2px; }
+  .set-arrow { margin-left: auto; font-size: 20px; font-weight: 600; color: var(--moss); }
+
+  /* mode chooser */
+  .mode-grid { display: grid; gap: 12px; }
+  .mode-card {
+    width: 100%; text-align: left; background: var(--paper);
+    border: 1.5px solid var(--line); border-radius: 15px; padding: 18px 20px;
+    display: flex; align-items: center; gap: 16px;
+  }
+  .mode-card:hover { transform: translateY(-2px); box-shadow: 0 10px 22px rgba(29,36,33,.10); }
+  .mode-letter {
+    width: 42px; height: 42px; border-radius: 11px; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-display); font-size: 19px; font-weight: 700;
+  }
+  .mode-name { font-family: var(--font-display); font-size: 17px; font-weight: 600; }
+  .mode-desc { color: var(--dim); font-size: 13px; margin-top: 2px; }
+
+  .topbar { display: flex; align-items: center; justify-content: space-between; margin-top: 28px; }
+  .topbar .label { font-size: 12.5px; color: var(--dim); font-weight: 600; }
+  .exit { background: none; color: var(--dim); font-size: 13px; font-weight: 600; padding: 4px; }
+  .exit:hover { color: var(--clay); }
+
+  .bar { height: 6px; background: var(--line); border-radius: 6px; margin-top: 12px; overflow: hidden; }
+  .bar > i { display: block; height: 100%; background: var(--moss); border-radius: 6px; transition: width .35s ease; }
+
+  /* flashcard */
+  .flip-outer { perspective: 1200px; margin-top: 24px; cursor: pointer; }
+  .flip { position: relative; width: 100%; height: 280px;
+    transform-style: preserve-3d; transition: transform .55s cubic-bezier(.2,.7,.2,1); }
+  .flip.on { transform: rotateY(180deg); }
+  .face { position: absolute; inset: 0; backface-visibility: hidden; -webkit-backface-visibility: hidden;
+    border-radius: 20px; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; padding: 0 32px; }
+  .face.front { background: var(--paper); border: 1.5px solid var(--line); box-shadow: 0 8px 26px rgba(29,36,33,.08); }
+  .face.back { background: var(--moss); transform: rotateY(180deg); box-shadow: 0 8px 26px rgba(29,36,33,.14); }
+  .kicker { font-size: 11px; letter-spacing: .14em; text-transform: uppercase; }
+  .term-lg { font-family: var(--font-display); font-size: 38px; font-weight: 600; margin-top: 10px; text-align: center; }
+  .def-lg { font-family: var(--font-display); font-size: 23px; font-weight: 500; margin-top: 12px;
+    color: #fff; text-align: center; line-height: 1.4; }
+  .card-img { max-width: 200px; max-height: 150px; margin-top: 12px; border-radius: 12px; }
+  /* inline SVG illustrations */
+  .art { margin-top: 12px; }
+  .art svg { width: 100%; height: 100%; display: block; }
+  .face.back .art { background: #fff; border-radius: 12px; padding: 6px; }
+  /* color swatches (Colors set) */
+  .swatch { display: inline-block; border-radius: 12px; margin-top: 12px;
+    box-shadow: 0 2px 8px rgba(29,36,33,.15); }
+  .tile.def .art, .tile.def .swatch { margin-top: 0; }
+  .opt .art, .opt .swatch { margin-top: 0; vertical-align: middle; }
+
+  .row { display: flex; gap: 12px; margin-top: 22px; }
+  .btn { flex: 1; padding: 15px; border-radius: 13px; font-size: 15px; font-weight: 600; }
+  .btn-know { background: var(--moss); color: #fff; }
+  .btn-learn { background: var(--paper); border: 1.5px solid var(--clay); color: var(--clay); }
+  .btn-dark { background: var(--ink); color: #fff; width: 100%; padding: 15px; border-radius: 13px;
+    font-size: 15px; font-weight: 600; margin-top: 16px; }
+
+  /* quiz */
+  .qcard { margin-top: 24px; background: var(--paper); border: 1.5px solid var(--line);
+    border-radius: 18px; padding: 24px 22px; }
+  .qword { font-family: var(--font-display); font-size: 34px; font-weight: 600; margin: 8px 0 20px; }
+  .opts { display: grid; gap: 10px; }
+  .opt { text-align: left; padding: 13px 15px; border-radius: 11px; background: var(--bg);
+    border: 1.5px solid var(--line); color: var(--ink); font-size: 14.5px; font-weight: 500; line-height: 1.4; }
+  .opt.correct { background: var(--moss-lt); border-color: var(--moss); color: var(--moss); }
+  .opt.wrong { background: #f6e3dc; border-color: var(--clay); color: var(--clay); }
+  .opt .tick { float: right; }
+
+  /* matching */
+  .match-grid { display: flex; gap: 12px; margin-top: 18px; }
+  .match-col { display: grid; gap: 9px; flex: 1; align-content: start; }
+  .tile { padding: 13px 12px; border-radius: 11px; border: 1.5px solid var(--line);
+    background: var(--paper); color: var(--ink); line-height: 1.35; }
+  .tile.term { font-family: var(--font-display); font-size: 16px; font-weight: 600; text-align: center; }
+  .tile.def { font-size: 12.5px; font-weight: 500; text-align: left; min-height: 56px; }
+  .tile.sel { background: var(--moss); color: #fff; border-color: var(--moss); }
+  .tile.matched { background: var(--moss-lt); color: rgba(47,93,78,.45); opacity: .55; cursor: default; }
+  .tile.bad { background: #f6e3dc; color: var(--clay); border-color: var(--clay); }
+
+  /* result */
+  .result { max-width: 460px; margin: 56px auto 0; text-align: center; }
+  .result .check { width: 62px; height: 62px; border-radius: 50%; background: var(--moss);
+    margin: 0 auto 20px; display: flex; align-items: center; justify-content: center;
+    font-size: 28px; color: #fff; }
+  .result h2 { font-family: var(--font-display); font-size: 27px; font-weight: 600; margin-bottom: 10px; }
+  .result p { color: var(--dim); font-size: 15px; margin-bottom: 4px; }
+
+  .name-input {
+    width: 100%; padding: 13px 15px; border-radius: 11px; border: 1.5px solid var(--line);
+    font-size: 15px; font-family: var(--font-body); background: var(--paper); color: var(--ink); margin-top: 6px;
+  }
+  .name-input:focus { outline: 2px solid var(--moss); outline-offset: 1px; }
+
+  .note {
+    margin-top: 28px; padding: 13px 15px; background: var(--moss-lt);
+    border: 1px solid var(--line); border-radius: 12px; font-size: 12.5px;
+    color: var(--moss); line-height: 1.5;
+  }
+  .reset { margin-top: 18px; background: none; color: var(--dim); font-size: 12.5px;
+    text-decoration: underline; text-underline-offset: 3px; padding: 2px; }
+
+  @keyframes rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+  .rise { animation: rise .4s ease both; }
+
+  @media (max-width: 480px) {
+    h1.page { font-size: 27px; }
+    .term-lg { font-size: 32px; }
+    .qword { font-size: 28px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <button class="logo" onclick="go({name:'home'})">SQA English</button>
+  <span class="crumb">A1 · Vocabulary Practice</span>
+  <span class="pill" id="head-pill">Level A1</span>
+</header>
+
+<div class="wrap" id="app"></div>
+
+<script>
+/* ================================================================
+   FORM_CONFIG — Google Form score reporting
+   ----------------------------------------------------------------
+   To turn on teacher reporting:
+   1. Create the A1 Google Form with 3 short-answer questions:
+        Student name | Set | Score
+   2. Open the form, click the three-dot menu > "Get pre-filled link"
+   3. Fill dummy answers, copy the link, read the entry.XXXX IDs
+   4. Paste the form ID and the three entry IDs below, set enabled:true
+   Until enabled is true, the tool runs fully and simply skips
+   the reporting step.
+   ================================================================ */
+const FORM_CONFIG = {
+  enabled: false,
+  formId: "PASTE_FORM_ID_HERE",
+  entryName: "entry.PASTE_NAME_ID",
+  entrySet: "entry.PASTE_SET_ID",
+  entryScore: "entry.PASTE_SCORE_ID",
+};
+
+/* ================================================================
+   SETS — the A1 vocabulary. Add or edit sets here.
+   ----------------------------------------------------------------
+   Each set:
+     id    : short unique string (no spaces)
+     name  : shown to students
+     type  : "text"  -> definition side is text
+             "image" -> definition side is a picture
+     cards : list of { term, def, img }
+        term : the vocabulary word/phrase
+        def  : the text definition  (used by "text" sets, and as
+               the fallback label for "image" sets with no picture)
+        img  : image filename in the images/ folder (image sets).
+               Leave "" until the picture exists — the tool will
+               show the def text instead so every mode still works.
+   ================================================================ */
+const SVG_ART = {
+  "wake up": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 130 130\" width=\"130\" height=\"130\" role=\"img\" aria-label=\"wake up\"><title>wake up</title><g transform=\"translate(0,0)\" fill=\"none\" stroke=\"#2f3a4a\" stroke-width=\"2.5\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><rect x=\"20\" y=\"78\" width=\"84\" height=\"30\" rx=\"6\" fill=\"#6c8fc7\"/><circle cx=\"38\" cy=\"66\" r=\"16\" fill=\"#f0c9a0\"/><path d=\"M28 58 L36 54 M48 58 L40 54\" stroke-width=\"2\"/><circle cx=\"92\" cy=\"34\" r=\"14\" fill=\"#f5d547\"/><path d=\"M92 14 L92 6 M108 24 L114 18 M76 24 L70 18 M112 40 L120 40\" stroke=\"#f0a93b\" stroke-width=\"2.5\"/></g></svg>",
+  "get up": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 130 130\" width=\"130\" height=\"130\" role=\"img\" aria-label=\"get up\"><title>get up</title><g transform=\"translate(0,0)\" fill=\"none\" stroke=\"#2f3a4a\" stroke-width=\"2.5\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><rect x=\"22\" y=\"100\" width=\"92\" height=\"14\" rx=\"4\" fill=\"#6c8fc7\"/><circle cx=\"68\" cy=\"34\" r=\"15\" fill=\"#f0c9a0\"/><path d=\"M68 49 L68 86 M68 60 L52 74 M68 60 L84 74 M68 86 L56 110 M68 86 L80 110\" stroke-width=\"3\"/></g></svg>",
+  "wash your face": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 130 130\" width=\"130\" height=\"130\" role=\"img\" aria-label=\"wash your face\"><title>wash your face</title><g transform=\"translate(0,0)\" fill=\"none\" stroke=\"#2f3a4a\" stroke-width=\"2.5\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><circle cx=\"65\" cy=\"56\" r=\"24\" fill=\"#f0c9a0\"/><path d=\"M38 72 Q52 90 65 90 Q78 90 92 72\" stroke=\"#5b8def\" stroke-width=\"4\"/><circle cx=\"40\" cy=\"98\" r=\"6\" fill=\"#6c8fc7\"/><circle cx=\"58\" cy=\"104\" r=\"6\" fill=\"#6c8fc7\"/><circle cx=\"76\" cy=\"104\" r=\"6\" fill=\"#6c8fc7\"/><circle cx=\"92\" cy=\"98\" r=\"6\" fill=\"#6c8fc7\"/></g></svg>",
+  "brush your teeth": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 130 130\" width=\"130\" height=\"130\" role=\"img\" aria-label=\"brush your teeth\"><title>brush your teeth</title><g transform=\"translate(0,0)\" fill=\"none\" stroke=\"#2f3a4a\" stroke-width=\"2.5\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><path d=\"M38 112 L38 50 Q38 36 58 36 Q78 36 78 50 L78 112 Z\" fill=\"#ffffff\"/><path d=\"M38 50 Q38 36 58 36 Q78 36 78 50 Z\" fill=\"#4aa39a\"/><rect x=\"82\" y=\"44\" width=\"10\" height=\"48\" rx=\"3\" fill=\"#d96c4f\"/><rect x=\"80\" y=\"36\" width=\"14\" height=\"12\" rx=\"3\" fill=\"#5b8def\"/></g></svg>",
+  "get dressed": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 130 130\" width=\"130\" height=\"130\" role=\"img\" aria-label=\"get dressed\"><title>get dressed</title><g transform=\"translate(0,0)\" fill=\"none\" stroke=\"#2f3a4a\" stroke-width=\"2.5\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><circle cx=\"65\" cy=\"38\" r=\"15\" fill=\"#f0c9a0\"/><path d=\"M50 58 L80 58 L84 96 L46 96 Z\" fill=\"#d96c4f\"/><path d=\"M50 58 L36 76 M80 58 L94 76\" stroke-width=\"3\"/><rect x=\"52\" y=\"96\" width=\"14\" height=\"20\" fill=\"#4f6275\"/><rect x=\"68\" y=\"96\" width=\"14\" height=\"20\" fill=\"#4f6275\"/></g></svg>",
+  "have breakfast": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 130 130\" width=\"130\" height=\"130\" role=\"img\" aria-label=\"have breakfast\"><title>have breakfast</title><g transform=\"translate(0,0)\" fill=\"none\" stroke=\"#2f3a4a\" stroke-width=\"2.5\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><ellipse cx=\"65\" cy=\"84\" rx=\"38\" ry=\"12\" fill=\"#ffffff\"/><path d=\"M32 84 Q32 104 65 104 Q98 104 98 84\" fill=\"#ffffff\"/><circle cx=\"54\" cy=\"80\" r=\"10\" fill=\"#f0a93b\"/><path d=\"M50 76 L58 84 M58 76 L50 84\" stroke=\"#d96c4f\" stroke-width=\"2\"/><rect x=\"72\" y=\"72\" width=\"20\" height=\"14\" fill=\"#e0719a\"/><path d=\"M98 80 L112 76 L112 88 L98 90 Z\" fill=\"#6c8fc7\"/></g></svg>",
+  "leave the house": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 130 130\" width=\"130\" height=\"130\" role=\"img\" aria-label=\"leave the house\"><title>leave the house</title><g transform=\"translate(0,0)\" fill=\"none\" stroke=\"#2f3a4a\" stroke-width=\"2.5\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><rect x=\"24\" y=\"36\" width=\"48\" height=\"82\" fill=\"#6c8fc7\"/><path d=\"M24 36 L48 20 L72 36 Z\" fill=\"#d96c4f\"/><rect x=\"40\" y=\"66\" width=\"20\" height=\"52\" rx=\"3\" fill=\"#7a5230\"/><circle cx=\"86\" cy=\"64\" r=\"14\" fill=\"#f0c9a0\"/><path d=\"M86 78 L86 110 M86 88 L72 100 M86 88 L100 96 M86 110 L74 114 M86 110 L100 114\" stroke-width=\"3\"/><path d=\"M104 92 L118 88 M104 100 L120 100 M104 108 L116 112\" stroke=\"#9b6cc7\" stroke-width=\"2\"/></g></svg>",
+  "go to work": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 130 130\" width=\"130\" height=\"130\" role=\"img\" aria-label=\"go to work\"><title>go to work</title><g transform=\"translate(0,0)\" fill=\"none\" stroke=\"#2f3a4a\" stroke-width=\"2.5\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><circle cx=\"44\" cy=\"42\" r=\"14\" fill=\"#f0c9a0\"/><path d=\"M44 56 L44 90 M44 66 L28 78 M44 66 L62 76 M44 90 L32 114 M44 90 L58 114\" stroke-width=\"3\"/><rect x=\"74\" y=\"40\" width=\"42\" height=\"48\" rx=\"3\" fill=\"#4f6275\"/><path d=\"M80 52 L110 52 M80 64 L110 64 M80 76 L100 76\" stroke=\"#f5d547\" stroke-width=\"2\"/></g></svg>",
+  "come home": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 130 130\" width=\"130\" height=\"130\" role=\"img\" aria-label=\"come home\"><title>come home</title><g transform=\"translate(0,0)\" fill=\"none\" stroke=\"#2f3a4a\" stroke-width=\"2.5\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><rect x=\"58\" y=\"36\" width=\"48\" height=\"82\" fill=\"#6c8fc7\"/><path d=\"M58 36 L82 20 L106 36 Z\" fill=\"#d96c4f\"/><rect x=\"70\" y=\"66\" width=\"20\" height=\"52\" rx=\"3\" fill=\"#7a5230\"/><circle cx=\"38\" cy=\"64\" r=\"14\" fill=\"#f0c9a0\"/><path d=\"M38 78 L38 110 M38 88 L24 96 M38 88 L52 100 M38 110 L26 114 M38 110 L52 114\" stroke-width=\"3\"/></g></svg>",
+  "eat dinner": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 130 130\" width=\"130\" height=\"130\" role=\"img\" aria-label=\"eat dinner\"><title>eat dinner</title><g transform=\"translate(0,0)\" fill=\"none\" stroke=\"#2f3a4a\" stroke-width=\"2.5\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><ellipse cx=\"65\" cy=\"86\" rx=\"40\" ry=\"13\" fill=\"#ffffff\"/><path d=\"M30 86 Q30 108 65 108 Q100 108 100 86\" fill=\"#ffffff\"/><path d=\"M42 82 Q52 68 62 82 Q72 68 82 82 Q88 70 88 82\" stroke=\"#d96c4f\" stroke-width=\"3\"/><ellipse cx=\"65\" cy=\"82\" rx=\"22\" ry=\"7\" fill=\"#f0a93b\"/></g></svg>",
+  "watch TV": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 130 130\" width=\"130\" height=\"130\" role=\"img\" aria-label=\"watch TV\"><title>watch TV</title><g transform=\"translate(0,0)\" fill=\"none\" stroke=\"#2f3a4a\" stroke-width=\"2.5\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><rect x=\"30\" y=\"38\" width=\"70\" height=\"52\" rx=\"4\" fill=\"#4f6275\"/><rect x=\"38\" y=\"46\" width=\"54\" height=\"36\" fill=\"#6c8fc7\"/><path d=\"M52 64 L72 54 L72 74 Z\" fill=\"#ffffff\"/><rect x=\"60\" y=\"90\" width=\"10\" height=\"14\" fill=\"#2f3a4a\"/><rect x=\"42\" y=\"104\" width=\"46\" height=\"8\" rx=\"3\" fill=\"#7a5230\"/></g></svg>",
+  "shower": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 130 130\" width=\"130\" height=\"130\" role=\"img\" aria-label=\"shower\"><title>shower</title><g transform=\"translate(0,0)\" fill=\"none\" stroke=\"#2f3a4a\" stroke-width=\"2.5\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><rect x=\"40\" y=\"30\" width=\"50\" height=\"10\" rx=\"3\" fill=\"#4aa39a\"/><path d=\"M48 40 L48 48 M60 40 L60 48 M72 40 L72 48 M84 40 L84 48\" stroke=\"#5b8def\" stroke-width=\"2.5\"/><circle cx=\"66\" cy=\"68\" r=\"16\" fill=\"#f0c9a0\"/><path d=\"M50 84 L50 112 L82 112 L82 84\" stroke-width=\"3\"/><path d=\"M54 56 L78 80 M78 56 L54 80\" stroke=\"#5b8def\" stroke-width=\"2\"/></g></svg>",
+  "go to bed": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 130 130\" width=\"130\" height=\"130\" role=\"img\" aria-label=\"go to bed\"><title>go to bed</title><g transform=\"translate(0,0)\" fill=\"none\" stroke=\"#2f3a4a\" stroke-width=\"2.5\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><rect x=\"22\" y=\"80\" width=\"88\" height=\"34\" rx=\"6\" fill=\"#6c8fc7\"/><rect x=\"22\" y=\"64\" width=\"20\" height=\"18\" rx=\"4\" fill=\"#4f6275\"/><circle cx=\"56\" cy=\"76\" r=\"13\" fill=\"#f0c9a0\"/><path d=\"M43 78 Q56 88 69 78\" fill=\"#e0719a\"/><text x=\"86\" y=\"56\" font-size=\"20\" font-weight=\"500\" fill=\"#9b6cc7\" stroke=\"none\" font-family=\"sans-serif\">z</text><text x=\"98\" y=\"42\" font-size=\"14\" font-weight=\"500\" fill=\"#9b6cc7\" stroke=\"none\" font-family=\"sans-serif\">z</text></g></svg>",
+  "doctor": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 130 130\" width=\"130\" height=\"130\" role=\"img\" aria-label=\"doctor\"><title>doctor</title><g transform=\"translate(0,4)\" fill=\"none\" stroke=\"#2f3a4a\" stroke-width=\"2.5\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><circle cx=\"65\" cy=\"58\" r=\"20\" fill=\"#f0c9a0\"/><path d=\"M45 80 Q46 112 65 112 Q84 112 85 80 Z\" fill=\"#ffffff\"/><path d=\"M65 80 L65 112 M56 85 L74 85\"/><circle cx=\"65\" cy=\"98\" r=\"6\" fill=\"#5b8def\"/></g></svg>",
+  "housekeeper": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 130 130\" width=\"130\" height=\"130\" role=\"img\" aria-label=\"housekeeper\"><title>housekeeper</title><g transform=\"translate(0,4)\" fill=\"none\" stroke=\"#2f3a4a\" stroke-width=\"2.5\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><circle cx=\"58\" cy=\"56\" r=\"18\" fill=\"#e0b48a\"/><path d=\"M40 76 Q41 108 58 108 Q75 108 76 76 Z\" fill=\"#4aa39a\"/><rect x=\"86\" y=\"56\" width=\"6\" height=\"44\" fill=\"#9b6cc7\"/><path d=\"M81 54 L97 54 L94 64 L84 64 Z\" fill=\"#f0a93b\"/></g></svg>",
+  "teacher": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 130 130\" width=\"130\" height=\"130\" role=\"img\" aria-label=\"teacher\"><title>teacher</title><g transform=\"translate(0,4)\" fill=\"none\" stroke=\"#2f3a4a\" stroke-width=\"2.5\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><circle cx=\"54\" cy=\"56\" r=\"18\" fill=\"#f0c9a0\"/><path d=\"M36 76 Q37 108 54 108 Q71 108 72 76 Z\" fill=\"#d96c4f\"/><rect x=\"76\" y=\"40\" width=\"34\" height=\"46\" rx=\"2\" fill=\"#4f6275\"/><path d=\"M82 52 L104 52 M82 62 L104 62 M82 72 L96 72\" stroke=\"#ffffff\" stroke-width=\"2\"/></g></svg>",
+  "dentist": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 130 130\" width=\"130\" height=\"130\" role=\"img\" aria-label=\"dentist\"><title>dentist</title><g transform=\"translate(0,4)\" fill=\"none\" stroke=\"#2f3a4a\" stroke-width=\"2.5\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><circle cx=\"65\" cy=\"58\" r=\"20\" fill=\"#e0b48a\"/><path d=\"M45 80 Q46 112 65 112 Q84 112 85 80 Z\" fill=\"#ffffff\"/><rect x=\"53\" y=\"38\" width=\"24\" height=\"8\" rx=\"2\" fill=\"#6c8fc7\"/><path d=\"M88 78 L102 92 M102 78 L88 92\" stroke=\"#4f6275\" stroke-width=\"3\"/></g></svg>",
+  "pilot": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 130 130\" width=\"130\" height=\"130\" role=\"img\" aria-label=\"pilot\"><title>pilot</title><g transform=\"translate(0,4)\" fill=\"none\" stroke=\"#2f3a4a\" stroke-width=\"2.5\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><circle cx=\"65\" cy=\"60\" r=\"20\" fill=\"#f0c9a0\"/><path d=\"M45 82 Q46 114 65 114 Q84 114 85 82 Z\" fill=\"#2f4a6d\"/><path d=\"M45 44 Q65 30 85 44 L85 50 L45 50 Z\" fill=\"#1f2f44\"/><path d=\"M65 36 L72 42 L65 46 L58 42 Z\" fill=\"#f0a93b\"/></g></svg>",
+  "chef": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 130 130\" width=\"130\" height=\"130\" role=\"img\" aria-label=\"chef\"><title>chef</title><g transform=\"translate(0,4)\" fill=\"none\" stroke=\"#2f3a4a\" stroke-width=\"2.5\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><circle cx=\"65\" cy=\"64\" r=\"19\" fill=\"#e0b48a\"/><path d=\"M46 84 Q47 114 65 114 Q83 114 84 84 Z\" fill=\"#ffffff\"/><path d=\"M46 38 Q46 24 65 24 Q84 24 84 38 Q84 44 76 44 L54 44 Q46 44 46 38 Z\" fill=\"#ffffff\"/><rect x=\"54\" y=\"42\" width=\"22\" height=\"6\" fill=\"#ffffff\"/></g></svg>",
+  "waiter / waitress": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 130 130\" width=\"130\" height=\"130\" role=\"img\" aria-label=\"waiter / waitress\"><title>waiter / waitress</title><g transform=\"translate(0,4)\" fill=\"none\" stroke=\"#2f3a4a\" stroke-width=\"2.5\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><circle cx=\"54\" cy=\"56\" r=\"18\" fill=\"#f0c9a0\"/><path d=\"M36 76 Q37 108 54 108 Q71 108 72 76 Z\" fill=\"#1f2f44\"/><rect x=\"79\" y=\"54\" width=\"30\" height=\"22\" rx=\"3\" fill=\"#d96c4f\"/><circle cx=\"94\" cy=\"48\" r=\"5\" fill=\"#9b6cc7\"/></g></svg>",
+  "taxi driver": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 130 130\" width=\"130\" height=\"130\" role=\"img\" aria-label=\"taxi driver\"><title>taxi driver</title><g transform=\"translate(0,4)\" fill=\"none\" stroke=\"#2f3a4a\" stroke-width=\"2.5\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><rect x=\"22\" y=\"76\" width=\"78\" height=\"34\" rx=\"6\" fill=\"#f0a93b\"/><rect x=\"34\" y=\"64\" width=\"40\" height=\"20\" rx=\"5\" fill=\"#f0a93b\"/><rect x=\"38\" y=\"56\" width=\"20\" height=\"12\" rx=\"3\" fill=\"#4f6275\"/><circle cx=\"36\" cy=\"112\" r=\"9\" fill=\"#2f3a4a\"/><circle cx=\"88\" cy=\"112\" r=\"9\" fill=\"#2f3a4a\"/></g></svg>",
+  "sales person": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 130 130\" width=\"130\" height=\"130\" role=\"img\" aria-label=\"salesperson\"><title>salesperson</title><g transform=\"translate(0,4)\" fill=\"none\" stroke=\"#2f3a4a\" stroke-width=\"2.5\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><circle cx=\"54\" cy=\"56\" r=\"18\" fill=\"#e0b48a\"/><path d=\"M36 76 Q37 108 54 108 Q71 108 72 76 Z\" fill=\"#5b8def\"/><rect x=\"76\" y=\"52\" width=\"34\" height=\"42\" rx=\"3\" fill=\"#4aa39a\"/><path d=\"M76 64 L110 64\" stroke=\"#ffffff\" stroke-width=\"2\"/><circle cx=\"84\" cy=\"78\" r=\"3\" fill=\"#ffffff\"/></g></svg>",
+  "receptionist": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 130 130\" width=\"130\" height=\"130\" role=\"img\" aria-label=\"receptionist\"><title>receptionist</title><g transform=\"translate(0,4)\" fill=\"none\" stroke=\"#2f3a4a\" stroke-width=\"2.5\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><circle cx=\"65\" cy=\"54\" r=\"18\" fill=\"#f0c9a0\"/><path d=\"M47 74 Q48 102 65 102 Q82 102 83 74 Z\" fill=\"#e0719a\"/><rect x=\"30\" y=\"100\" width=\"70\" height=\"14\" rx=\"3\" fill=\"#7a5230\"/><rect x=\"76\" y=\"84\" width=\"22\" height=\"16\" rx=\"2\" fill=\"#4f6275\"/></g></svg>",
+  "retired": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 130 130\" width=\"130\" height=\"130\" role=\"img\" aria-label=\"retired\"><title>retired</title><g transform=\"translate(0,4)\" fill=\"none\" stroke=\"#2f3a4a\" stroke-width=\"2.5\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><circle cx=\"48\" cy=\"60\" r=\"16\" fill=\"#e0b48a\"/><path d=\"M32 78 Q33 104 48 104 Q63 104 64 78 Z\" fill=\"#9b6cc7\"/><circle cx=\"84\" cy=\"60\" r=\"16\" fill=\"#f0c9a0\"/><path d=\"M68 78 Q69 104 84 104 Q99 104 100 78 Z\" fill=\"#4aa39a\"/><path d=\"M50 40 L58 30 M82 40 L74 30\" stroke-width=\"2.5\"/></g></svg>",
+  "unemployed": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 130 130\" width=\"130\" height=\"130\" role=\"img\" aria-label=\"unemployed\"><title>unemployed</title><g transform=\"translate(0,4)\" fill=\"none\" stroke=\"#2f3a4a\" stroke-width=\"2.5\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><circle cx=\"65\" cy=\"52\" r=\"17\" fill=\"#f0c9a0\"/><path d=\"M47 72 Q48 100 65 100 Q82 100 83 72 Z\" fill=\"#6c8fc7\"/><rect x=\"38\" y=\"80\" width=\"54\" height=\"36\" rx=\"2\" fill=\"#ffffff\"/><path d=\"M44 90 L86 90 M44 98 L86 98 M44 106 L72 106\" stroke=\"#4f6275\" stroke-width=\"2\"/><text x=\"65\" y=\"78\" text-anchor=\"middle\" font-size=\"9\" font-weight=\"500\" fill=\"#d96c4f\" stroke=\"none\" font-family=\"sans-serif\">JOBS</text></g></svg>",
+  "IT specialist": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 130 130\" width=\"130\" height=\"130\" role=\"img\" aria-label=\"IT specialist\"><title>IT specialist</title><g transform=\"translate(0,4)\" fill=\"none\" stroke=\"#2f3a4a\" stroke-width=\"2.5\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><circle cx=\"54\" cy=\"54\" r=\"17\" fill=\"#e0b48a\"/><path d=\"M37 74 Q38 102 54 102 Q70 102 71 74 Z\" fill=\"#4f6275\"/><rect x=\"74\" y=\"60\" width=\"36\" height=\"26\" rx=\"2\" fill=\"#2f4a6d\"/><rect x=\"80\" y=\"66\" width=\"24\" height=\"14\" fill=\"#6c8fc7\"/><rect x=\"84\" y=\"86\" width=\"16\" height=\"8\" fill=\"#2f4a6d\"/></g></svg>",
+  "secretary": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 130 130\" width=\"130\" height=\"130\" role=\"img\" aria-label=\"secretary\"><title>secretary</title><g transform=\"translate(0,4)\" fill=\"none\" stroke=\"#2f3a4a\" stroke-width=\"2.5\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><circle cx=\"54\" cy=\"54\" r=\"17\" fill=\"#f0c9a0\"/><path d=\"M37 74 Q38 102 54 102 Q70 102 71 74 Z\" fill=\"#e0719a\"/><rect x=\"74\" y=\"78\" width=\"38\" height=\"28\" rx=\"2\" fill=\"#f0a93b\"/><path d=\"M80 88 L106 88 M80 96 L106 96\" stroke=\"#ffffff\" stroke-width=\"2\"/></g></svg>",
+  "engineer": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 130 130\" width=\"130\" height=\"130\" role=\"img\" aria-label=\"engineer\"><title>engineer</title><g transform=\"translate(0,4)\" fill=\"none\" stroke=\"#2f3a4a\" stroke-width=\"2.5\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><circle cx=\"65\" cy=\"62\" r=\"19\" fill=\"#e0b48a\"/><path d=\"M46 82 Q47 112 65 112 Q83 112 84 82 Z\" fill=\"#f0a93b\"/><path d=\"M46 46 Q65 32 84 46 Q84 54 76 54 L54 54 Q46 54 46 46 Z\" fill=\"#f5d547\"/><rect x=\"54\" y=\"38\" width=\"22\" height=\"10\" rx=\"3\" fill=\"#f5d547\"/></g></svg>",
+  "mechanic": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 130 130\" width=\"130\" height=\"130\" role=\"img\" aria-label=\"mechanic\"><title>mechanic</title><g transform=\"translate(0,4)\" fill=\"none\" stroke=\"#2f3a4a\" stroke-width=\"2.5\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><circle cx=\"54\" cy=\"58\" r=\"18\" fill=\"#f0c9a0\"/><path d=\"M36 78 Q37 108 54 108 Q71 108 72 78 Z\" fill=\"#4f6275\"/><rect x=\"78\" y=\"72\" width=\"10\" height=\"34\" rx=\"2\" fill=\"#9b6cc7\"/><path d=\"M74 68 L92 68 L88 80 L78 80 Z\" fill=\"#5b8def\"/></g></svg>",
+  "artist": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 130 130\" width=\"130\" height=\"130\" role=\"img\" aria-label=\"artist\"><title>artist</title><g transform=\"translate(0,4)\" fill=\"none\" stroke=\"#2f3a4a\" stroke-width=\"2.5\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><circle cx=\"54\" cy=\"56\" r=\"17\" fill=\"#e0b48a\"/><path d=\"M37 76 Q38 104 54 104 Q70 104 71 76 Z\" fill=\"#9b6cc7\"/><rect x=\"76\" y=\"54\" width=\"34\" height=\"42\" rx=\"2\" fill=\"#ffffff\"/><circle cx=\"86\" cy=\"66\" r=\"5\" fill=\"#d96c4f\"/><path d=\"M80 88 L94 74 L106 88 Z\" fill=\"#4aa39a\"/></g></svg>",
+  "businessman / businesswoman": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 130 130\" width=\"130\" height=\"130\" role=\"img\" aria-label=\"businessperson\"><title>businessperson</title><g transform=\"translate(0,4)\" fill=\"none\" stroke=\"#2f3a4a\" stroke-width=\"2.5\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><circle cx=\"65\" cy=\"54\" r=\"18\" fill=\"#f0c9a0\"/><path d=\"M47 74 Q48 104 65 104 Q82 104 83 74 Z\" fill=\"#2f4a6d\"/><path d=\"M65 74 L60 104 M65 74 L70 104\" stroke=\"#ffffff\" stroke-width=\"2\"/><path d=\"M65 74 L65 88\" stroke=\"#d96c4f\" stroke-width=\"3\"/><rect x=\"78\" y=\"84\" width=\"22\" height=\"16\" rx=\"2\" fill=\"#4f6275\"/></g></svg>",
+  "shop assistant": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 130 130\" width=\"130\" height=\"130\" role=\"img\" aria-label=\"shop assistant\"><title>shop assistant</title><g transform=\"translate(0,4)\" fill=\"none\" stroke=\"#2f3a4a\" stroke-width=\"2.5\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><circle cx=\"54\" cy=\"56\" r=\"17\" fill=\"#e0b48a\"/><path d=\"M37 76 Q38 104 54 104 Q70 104 71 76 Z\" fill=\"#4aa39a\"/><rect x=\"76\" y=\"60\" width=\"34\" height=\"44\" rx=\"3\" fill=\"#f0a93b\"/><path d=\"M82 70 L104 70 M82 80 L104 80 M82 90 L98 90\" stroke=\"#ffffff\" stroke-width=\"2\"/></g></svg>",
+  "nurse": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 130 130\" width=\"130\" height=\"130\" role=\"img\" aria-label=\"nurse\"><title>nurse</title><g transform=\"translate(0,4)\" fill=\"none\" stroke=\"#2f3a4a\" stroke-width=\"2.5\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><circle cx=\"65\" cy=\"58\" r=\"20\" fill=\"#f0c9a0\"/><path d=\"M45 80 Q46 112 65 112 Q84 112 85 80 Z\" fill=\"#5b8def\"/><path d=\"M48 44 Q65 32 82 44 L82 50 L48 50 Z\" fill=\"#ffffff\"/><path d=\"M65 36 L65 44 M61 40 L69 40\" stroke=\"#d96c4f\" stroke-width=\"2.5\"/></g></svg>",
+  "shirt": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 130 130\" width=\"130\" height=\"130\" role=\"img\" aria-label=\"shirt\"><title>shirt</title><g transform=\"translate(0,0)\" fill=\"none\" stroke=\"#2f3a4a\" stroke-width=\"2.5\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><path d=\"M40 40 L30 50 L42 64 L42 130 L88 130 L88 64 L100 50 L90 40 L78 40 Q65 54 52 40 Z\" fill=\"#5b8def\"/><path d=\"M52 40 Q65 54 78 40\"/><path d=\"M42 64 L30 76 M88 64 L100 76\"/></g></svg>",
+  "t-shirt": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 130 130\" width=\"130\" height=\"130\" role=\"img\" aria-label=\"t-shirt\"><title>t-shirt</title><g transform=\"translate(0,0)\" fill=\"none\" stroke=\"#2f3a4a\" stroke-width=\"2.5\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><path d=\"M38 44 L24 54 L34 76 L42 70 L42 130 L88 130 L88 70 L96 76 L106 54 L92 44 Q65 60 38 44 Z\" fill=\"#f0a93b\"/><path d=\"M38 44 Q65 60 92 44\"/></g></svg>",
+  "trousers / pants": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 130 130\" width=\"130\" height=\"130\" role=\"img\" aria-label=\"pants\"><title>pants</title><g transform=\"translate(0,0)\" fill=\"none\" stroke=\"#2f3a4a\" stroke-width=\"2.5\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><path d=\"M44 36 L86 36 L90 130 L70 130 L65 72 L60 130 L40 130 Z\" fill=\"#4f6275\"/><path d=\"M44 36 L86 36\"/></g></svg>",
+  "jeans": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 130 130\" width=\"130\" height=\"130\" role=\"img\" aria-label=\"jeans\"><title>jeans</title><g transform=\"translate(0,0)\" fill=\"none\" stroke=\"#2f3a4a\" stroke-width=\"2.5\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><path d=\"M44 36 L86 36 L90 130 L70 130 L65 72 L60 130 L40 130 Z\" fill=\"#6c8fc7\"/><path d=\"M44 36 L86 36 M44 48 L86 48\" stroke-width=\"2\"/><path d=\"M55 58 L55 120 M75 58 L75 120\" stroke-width=\"1.5\" stroke-dasharray=\"3 3\"/></g></svg>",
+  "dress": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 130 130\" width=\"130\" height=\"130\" role=\"img\" aria-label=\"dress\"><title>dress</title><g transform=\"translate(0,0)\" fill=\"none\" stroke=\"#2f3a4a\" stroke-width=\"2.5\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><path d=\"M52 36 Q65 46 78 36 L96 50 L86 66 L80 60 L86 130 L44 130 L50 60 L44 66 L34 50 Z\" fill=\"#e0719a\"/><path d=\"M52 36 Q65 46 78 36\"/></g></svg>",
+  "skirt": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 130 130\" width=\"130\" height=\"130\" role=\"img\" aria-label=\"skirt\"><title>skirt</title><g transform=\"translate(0,0)\" fill=\"none\" stroke=\"#2f3a4a\" stroke-width=\"2.5\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><path d=\"M48 50 L82 50 L102 126 L28 126 Z\" fill=\"#9b6cc7\"/><path d=\"M48 50 L82 50 M48 62 L82 62\" stroke-width=\"2\"/></g></svg>",
+  "jacket": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 130 130\" width=\"130\" height=\"130\" role=\"img\" aria-label=\"jacket\"><title>jacket</title><g transform=\"translate(0,0)\" fill=\"none\" stroke=\"#2f3a4a\" stroke-width=\"2.5\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><path d=\"M40 38 L30 50 L40 66 L40 130 L65 130 L65 38 Z\" fill=\"#4aa39a\"/><path d=\"M90 38 L100 50 L90 66 L90 130 L65 130 L65 38 Z\" fill=\"#4aa39a\"/><path d=\"M65 38 L65 130\" stroke-width=\"2\"/><path d=\"M40 66 L28 78 M90 66 L102 78\"/><circle cx=\"65\" cy=\"58\" r=\"3\" fill=\"#2f3a4a\"/><circle cx=\"65\" cy=\"80\" r=\"3\" fill=\"#2f3a4a\"/><circle cx=\"65\" cy=\"102\" r=\"3\" fill=\"#2f3a4a\"/></g></svg>",
+  "coat": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 130 130\" width=\"130\" height=\"130\" role=\"img\" aria-label=\"coat\"><title>coat</title><g transform=\"translate(0,0)\" fill=\"none\" stroke=\"#2f3a4a\" stroke-width=\"2.5\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><path d=\"M38 36 L26 50 L36 68 L36 130 L65 130 L65 36 Z\" fill=\"#b5651d\"/><path d=\"M92 36 L104 50 L94 68 L94 130 L65 130 L65 36 Z\" fill=\"#b5651d\"/><path d=\"M65 36 L65 130\" stroke-width=\"2\"/><path d=\"M36 68 L24 82 M94 68 L106 82\"/><path d=\"M42 40 L42 124 M88 40 L88 124\" stroke-width=\"2\"/><circle cx=\"65\" cy=\"58\" r=\"3\" fill=\"#2f3a4a\"/><circle cx=\"65\" cy=\"84\" r=\"3\" fill=\"#2f3a4a\"/><circle cx=\"65\" cy=\"110\" r=\"3\" fill=\"#2f3a4a\"/></g></svg>",
+  "sweater / jumper": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 130 130\" width=\"130\" height=\"130\" role=\"img\" aria-label=\"sweater\"><title>sweater</title><g transform=\"translate(0,0)\" fill=\"none\" stroke=\"#2f3a4a\" stroke-width=\"2.5\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><path d=\"M42 44 L28 56 L36 80 L44 74 L44 128 L86 128 L86 74 L94 80 L102 56 L88 44 Q65 58 42 44 Z\" fill=\"#d96c4f\"/><path d=\"M42 44 Q65 58 88 44\"/><path d=\"M44 124 L86 124 M36 76 L44 80 M94 76 L86 80\" stroke-width=\"2\"/></g></svg>",
+  "shoes": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 130 130\" width=\"130\" height=\"130\" role=\"img\" aria-label=\"shoes\"><title>shoes</title><g transform=\"translate(0,0)\" fill=\"none\" stroke=\"#2f3a4a\" stroke-width=\"2.5\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><path d=\"M26 96 Q26 72 52 72 L88 72 Q106 72 106 90 Q106 104 86 104 L52 104 Q40 104 40 114 L40 120 L20 120 L20 108 Q20 96 26 96 Z\" fill=\"#5b8def\"/><path d=\"M52 72 Q52 90 68 90\" stroke-width=\"2\"/></g></svg>",
+  "boots": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 130 130\" width=\"130\" height=\"130\" role=\"img\" aria-label=\"boots\"><title>boots</title><g transform=\"translate(0,0)\" fill=\"none\" stroke=\"#2f3a4a\" stroke-width=\"2.5\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><path d=\"M48 36 L76 36 L76 90 Q96 90 102 104 L104 118 L32 118 L32 104 Q32 90 48 90 Z\" fill=\"#7a5230\"/><path d=\"M48 36 L76 36 M48 50 L76 50\" stroke-width=\"2\"/><path d=\"M32 110 L104 110\" stroke-width=\"2\"/></g></svg>",
+  "socks": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 130 130\" width=\"130\" height=\"130\" role=\"img\" aria-label=\"socks\"><title>socks</title><g transform=\"translate(0,0)\" fill=\"none\" stroke=\"#2f3a4a\" stroke-width=\"2.5\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><path d=\"M52 34 L78 34 L78 90 Q78 108 64 108 L48 108 Q36 108 36 96 Q36 88 46 88 L58 88 L58 34 Z\" fill=\"#4aa39a\"/><path d=\"M52 34 L78 34 M52 42 L78 42\" stroke-width=\"2\"/></g></svg>",
+  "hat": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 130 130\" width=\"130\" height=\"130\" role=\"img\" aria-label=\"hat\"><title>hat</title><g transform=\"translate(0,0)\" fill=\"none\" stroke=\"#2f3a4a\" stroke-width=\"2.5\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><path d=\"M40 102 Q40 50 65 50 Q90 50 90 102 Z\" fill=\"#e0719a\"/><path d=\"M28 102 L102 102 Q102 112 92 112 L38 112 Q28 112 28 102 Z\" fill=\"#c64f7d\"/></g></svg>",
+  "scarf": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 130 130\" width=\"130\" height=\"130\" role=\"img\" aria-label=\"scarf\"><title>scarf</title><g transform=\"translate(0,0)\" fill=\"none\" stroke=\"#2f3a4a\" stroke-width=\"2.5\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><path d=\"M42 44 Q65 58 88 44 L88 64 Q65 78 42 64 Z\" fill=\"#f0a93b\"/><path d=\"M58 68 L48 128 L68 128 L78 72\" fill=\"#f0a93b\"/><path d=\"M48 122 L68 122\" stroke-width=\"2\"/></g></svg>",
+  "gloves": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 130 130\" width=\"130\" height=\"130\" role=\"img\" aria-label=\"gloves\"><title>gloves</title><g transform=\"translate(0,0)\" fill=\"none\" stroke=\"#2f3a4a\" stroke-width=\"2.5\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><path d=\"M44 70 L44 44 Q44 36 52 36 Q60 36 60 44 L60 66 L64 66 L64 50 Q64 42 71 42 Q78 42 78 50 L78 68 L82 68 L82 56 Q82 48 89 48 Q96 48 96 56 L96 80 Q96 60 104 60 Q112 60 108 76 L102 104 Q98 124 78 124 L60 124 Q44 124 40 104 L34 84 Q30 72 38 72 Q44 72 44 80 Z\" fill=\"#6c8fc7\"/></g></svg>",
+  "shorts": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 130 130\" width=\"130\" height=\"130\" role=\"img\" aria-label=\"shorts\"><title>shorts</title><g transform=\"translate(0,0)\" fill=\"none\" stroke=\"#2f3a4a\" stroke-width=\"2.5\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><path d=\"M44 40 L86 40 L92 96 L74 96 L70 64 L65 96 L60 64 L56 96 L38 96 Z\" fill=\"#4f6275\"/><path d=\"M44 40 L86 40\"/></g></svg>",
+  "belt": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 130 130\" width=\"130\" height=\"130\" role=\"img\" aria-label=\"belt\"><title>belt</title><g transform=\"translate(0,0)\" fill=\"none\" stroke=\"#2f3a4a\" stroke-width=\"2.5\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><rect x=\"20\" y=\"58\" width=\"92\" height=\"22\" rx=\"3\" fill=\"#7a5230\"/><rect x=\"84\" y=\"52\" width=\"34\" height=\"34\" rx=\"4\" fill=\"#c9a24a\"/><path d=\"M92 52 L92 40 Q92 34 102 34 Q112 34 112 40 L112 52\"/><circle cx=\"101\" cy=\"69\" r=\"3\" fill=\"#2f3a4a\"/></g></svg>",
+};
+
+const SETS = [
+  {
+    id: "set1", name: "Set 1 · Classroom & Basics", type: "text",
+    cards: [
+      { term: "understand", def: "to know the meaning of something", img: "" },
+      { term: "repeat", def: "to say something again", img: "" },
+      { term: "country", def: "a land with its own people and government", img: "" },
+      { term: "teacher", def: "a person whose job is to help others learn", img: "" },
+      { term: "student", def: "a person who is learning at a school or class", img: "" },
+      { term: "link", def: "a web address you can click to open a page", img: "" },
+      { term: "homework", def: "school work you do at home", img: "" },
+      { term: "listen", def: "to pay attention to a sound or a person speaking", img: "" },
+      { term: "speak", def: "to say words; to talk", img: "" },
+      { term: "read", def: "to look at words and understand them", img: "" },
+      { term: "write", def: "to make words on paper or a screen", img: "" },
+    ],
+  },
+  {
+    id: "routines", name: "Set 2 · Daily Routines", type: "image",
+    cards: [
+      { term: "wake up", def: "wake up", img: "svg" },
+      { term: "get up", def: "get up", img: "svg" },
+      { term: "wash your face", def: "wash your face", img: "svg" },
+      { term: "brush your teeth", def: "brush your teeth", img: "svg" },
+      { term: "get dressed", def: "get dressed", img: "svg" },
+      { term: "have breakfast", def: "have breakfast", img: "svg" },
+      { term: "leave the house", def: "leave the house", img: "svg" },
+      { term: "go to work", def: "go to work", img: "svg" },
+      { term: "come home", def: "come home", img: "svg" },
+      { term: "eat dinner", def: "eat dinner", img: "svg" },
+      { term: "watch TV", def: "watch TV", img: "svg" },
+      { term: "shower", def: "shower", img: "svg" },
+      { term: "go to bed", def: "go to bed", img: "svg" },
+    ],
+  },
+  {
+    id: "jobs", name: "Set 3 · Jobs & Professions", type: "image",
+    cards: [
+      { term: "I am a doctor.", def: "doctor", img: "svg" },
+      { term: "I am a housekeeper.", def: "housekeeper", img: "svg" },
+      { term: "I am a teacher.", def: "teacher", img: "svg" },
+      { term: "I am a dentist.", def: "dentist", img: "svg" },
+      { term: "I am a pilot.", def: "pilot", img: "svg" },
+      { term: "I am a chef.", def: "chef", img: "svg" },
+      { term: "I am a waiter/waitress.", def: "waiter / waitress", img: "svg" },
+      { term: "I am a taxi driver.", def: "taxi driver", img: "svg" },
+      { term: "I am a sales person.", def: "sales person", img: "svg" },
+      { term: "I am a receptionist.", def: "receptionist", img: "svg" },
+      { term: "We are retired.", def: "retired", img: "svg" },
+      { term: "I am unemployed.", def: "unemployed", img: "svg" },
+      { term: "I am an IT specialist.", def: "IT specialist", img: "svg" },
+      { term: "I am a secretary.", def: "secretary", img: "svg" },
+      { term: "I am an engineer.", def: "engineer", img: "svg" },
+      { term: "I am a mechanic.", def: "mechanic", img: "svg" },
+      { term: "I am an artist.", def: "artist", img: "svg" },
+      { term: "I am a businessman/businesswoman.", def: "businessman / businesswoman", img: "svg" },
+      { term: "I am a shop assistant.", def: "shop assistant", img: "svg" },
+      { term: "I am a nurse.", def: "nurse", img: "svg" },
+    ],
+  },
+  {
+    id: "clothes", name: "Set 4 · Clothes", type: "image",
+    cards: [
+      { term: "shirt", def: "shirt", img: "svg" },
+      { term: "t-shirt", def: "t-shirt", img: "svg" },
+      { term: "trousers / pants", def: "trousers / pants", img: "svg" },
+      { term: "jeans", def: "jeans", img: "svg" },
+      { term: "dress", def: "dress", img: "svg" },
+      { term: "skirt", def: "skirt", img: "svg" },
+      { term: "jacket", def: "jacket", img: "svg" },
+      { term: "coat", def: "coat", img: "svg" },
+      { term: "sweater / jumper", def: "sweater / jumper", img: "svg" },
+      { term: "shoes", def: "shoes", img: "svg" },
+      { term: "boots", def: "boots", img: "svg" },
+      { term: "socks", def: "socks", img: "svg" },
+      { term: "hat", def: "hat", img: "svg" },
+      { term: "scarf", def: "scarf", img: "svg" },
+      { term: "gloves", def: "gloves", img: "svg" },
+      { term: "shorts", def: "shorts", img: "svg" },
+      { term: "belt", def: "belt", img: "svg" },
+    ],
+  },
+  {
+    id: "numbers", name: "Set 5 · Numbers", type: "text",
+    cards: [
+      { term: "one", def: "1", img: "" },
+      { term: "two", def: "2", img: "" },
+      { term: "three", def: "3", img: "" },
+      { term: "four", def: "4", img: "" },
+      { term: "five", def: "5", img: "" },
+      { term: "six", def: "6", img: "" },
+      { term: "seven", def: "7", img: "" },
+      { term: "eight", def: "8", img: "" },
+      { term: "nine", def: "9", img: "" },
+      { term: "ten", def: "10", img: "" },
+      { term: "eleven", def: "11", img: "" },
+      { term: "twelve", def: "12", img: "" },
+      { term: "thirteen", def: "13", img: "" },
+      { term: "fourteen", def: "14", img: "" },
+      { term: "fifteen", def: "15", img: "" },
+      { term: "sixteen", def: "16", img: "" },
+      { term: "seventeen", def: "17", img: "" },
+      { term: "eighteen", def: "18", img: "" },
+      { term: "nineteen", def: "19", img: "" },
+      { term: "twenty", def: "20", img: "" },
+      { term: "twenty-one", def: "21", img: "" },
+      { term: "thirty", def: "30", img: "" },
+      { term: "forty", def: "40", img: "" },
+      { term: "fifty", def: "50", img: "" },
+      { term: "sixty", def: "60", img: "" },
+      { term: "seventy", def: "70", img: "" },
+      { term: "eighty", def: "80", img: "" },
+      { term: "ninety", def: "90", img: "" },
+      { term: "one hundred", def: "100", img: "" }
+    ],
+  },
+  {
+    id: "colors", name: "Set 6 · Colors", type: "color",
+    cards: [
+      { term: "red", def: "the color of a tomato or a stop sign", img: "", swatch: "#d6432f" },
+      { term: "orange", def: "the color of an orange (the fruit)", img: "", swatch: "#e8842a" },
+      { term: "yellow", def: "the color of the sun or a banana", img: "", swatch: "#f2c531" },
+      { term: "green", def: "the color of grass and leaves", img: "", swatch: "#3f8a4f" },
+      { term: "blue", def: "the color of a clear sky", img: "", swatch: "#3f6fb5" },
+      { term: "purple", def: "the color of a grape or an eggplant", img: "", swatch: "#7a4f9b" },
+      { term: "pink", def: "a light red color", img: "", swatch: "#e0719a" },
+      { term: "brown", def: "the color of wood or chocolate", img: "", swatch: "#7a5230" },
+      { term: "black", def: "the darkest color; the color of night", img: "", swatch: "#1d2421" },
+      { term: "white", def: "the lightest color; the color of snow", img: "", swatch: "#fbfaf6" },
+      { term: "gray", def: "a color between black and white", img: "", swatch: "#9a958a" }
+    ],
+  },
+];
+
+/* ================================================================
+   ENGINE — no need to edit below this line to add vocabulary.
+   ================================================================ */
+const SET_COLORS = ["#2f5d4e", "#bf5a36", "#caa24a", "#516b8b", "#8a5a7a", "#5a7d52"];
+const $ = (id) => document.getElementById(id);
+const app = $("app");
+
+function shuffle(a){const x=[...a];for(let i=x.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[x[i],x[j]]=[x[j],x[i]];}return x;}
+function esc(s){return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));}
+
+/* ---- progress: stored per set in the browser ---- */
+function progKey(setId){return "sqa_vocab_a1_"+setId;}
+function loadProg(setId){
+  try { return JSON.parse(localStorage.getItem(progKey(setId))) || {}; }
+  catch(e){ return {}; }
+}
+function saveProg(setId,p){
+  try { localStorage.setItem(progKey(setId), JSON.stringify(p)); }
+  catch(e){ /* storage unavailable — tool still works for the session */ }
+}
+function bumpProg(setId,term,correct){
+  const p=loadProg(setId);
+  const c=p[term]||{seen:0,correct:0};
+  p[term]={seen:c.seen+1,correct:c.correct+(correct?1:0)};
+  saveProg(setId,p);
+}
+function learnedCount(set){
+  const p=loadProg(set.id);
+  return set.cards.filter(c=>p[c.term]&&p[c.term].correct>=2).length;
+}
+
+/* ---- Google Form reporting ---- */
+function reportScore(setName,scoreText){
+  if(!FORM_CONFIG.enabled) return;
+  try{
+    const name=(window.__studentName||"").trim();
+    const u="https://docs.google.com/forms/d/e/"+FORM_CONFIG.formId+"/formResponse";
+    const f=new FormData();
+    f.append(FORM_CONFIG.entryName,name);
+    f.append(FORM_CONFIG.entrySet,setName);
+    f.append(FORM_CONFIG.entryScore,scoreText);
+    fetch(u,{method:"POST",body:f,mode:"no-cors"});
+  }catch(e){ /* reporting is best-effort; never blocks the student */ }
+}
+
+/* ---- router ---- */
+let STATE={name:"home"};
+function go(s){STATE=s;render();}
+
+function render(){
+  const v=STATE.name;
+  if(v==="home")        renderHome();
+  else if(v==="modes")  renderModes();
+  else if(v==="flash")  renderFlash();
+  else if(v==="quiz")   renderQuiz();
+  else if(v==="match")  renderMatch();
+}
+
+/* ---- HOME: pick a set ---- */
+function renderHome(){
+  $("head-pill").textContent="Level A1";
+  let html=`<h1 class="page rise">Vocabulary practice</h1>
+    <p class="lead rise">Choose a set to study. Three ways to practise each one — flashcards, a quiz, and a matching game. Your progress is saved on this device.</p>
+    <div class="rise">`;
+  SETS.forEach((set,i)=>{
+    const color=SET_COLORS[i%SET_COLORS.length];
+    const learned=learnedCount(set);
+    const kind=set.type==="image"?"picture set":set.type==="color"?"color set":"definitions";
+    html+=`<button class="set-card" onclick='go({name:"modes",setId:"${set.id}"})'>
+      <span class="set-badge" style="background:${color}">${i+1}</span>
+      <span>
+        <span class="set-name">${esc(set.name)}</span>
+        <span class="set-meta">${set.cards.length} words · ${kind} · ${learned}/${set.cards.length} learned</span>
+      </span>
+      <span class="set-arrow" style="color:${color}">→</span>
+    </button>`;
+  });
+  html+=`</div>
+    <div class="note rise">
+      <strong style="font-family:var(--font-display)">Note for SQA staff:</strong>
+      picture sets show the word as text until illustrations are added to the
+      <code>images/</code> folder. Definitions are drafts — review before use.
+      Google Form reporting is off until the A1 Form is connected (see FORM_CONFIG in the file).
+    </div>`;
+  app.innerHTML=html;
+}
+
+/* ---- MODES: pick how to study ---- */
+function renderModes(){
+  const set=SETS.find(s=>s.id===STATE.setId);
+  $("head-pill").textContent=set.name.split("·").pop().trim();
+  const modes=[
+    {key:"flash",name:"Flashcards",desc:"Flip each card to see the meaning.",color:"var(--moss)",fg:"#fff"},
+    {key:"quiz",name:"Quiz",desc:"Pick the right answer. Four choices.",color:"var(--clay)",fg:"#fff"},
+    {key:"match",name:"Matching",desc:"Pair each word with its meaning.",color:"var(--gold)",fg:"var(--ink)"},
+  ];
+  let html=`<div class="topbar rise">
+      <span class="label">${esc(set.name)} · ${set.cards.length} words</span>
+      <button class="exit" onclick='go({name:"home"})'>← All sets</button>
+    </div>
+    <h1 class="page rise">How do you want to study?</h1>
+    <div class="mode-grid rise">`;
+  modes.forEach(m=>{
+    html+=`<button class="mode-card" onclick='go({name:"${m.key}",setId:"${set.id}"})'>
+      <span class="mode-letter" style="background:${m.color};color:${m.fg}">${m.name[0]}</span>
+      <span>
+        <span class="mode-name">${m.name}</span>
+        <span class="mode-desc">${m.desc}</span>
+      </span>
+      <span class="set-arrow" style="margin-left:auto;color:${m.color}">→</span>
+    </button>`;
+  });
+  html+=`</div>`;
+  if(learnedCount(set)>0){
+    html+=`<button class="reset" onclick='resetSet("${set.id}")'>Reset my progress for this set</button>`;
+  }
+  app.innerHTML=html;
+}
+function resetSet(id){ saveProg(id,{}); go({name:"modes",setId:id}); }
+
+/* ---- the meaning side renderer ----
+   Handles four cases, in priority order:
+     1. card.img === "svg"  -> inline illustration from SVG_ART
+     2. card.swatch         -> a solid color square (Colors set)
+     3. card.img (filename) -> external image from images/ folder
+     4. otherwise           -> the definition text
+   size: "lg" (flashcard back), "md" (quiz option), "sm" (match tile)
+*/
+function meaningHTML(card,size){
+  const dim = size==="lg" ? 150 : size==="md" ? 78 : 56;
+  // 1. embedded SVG illustration — keyed by term, or by def for sentence-style sets
+  if(card.img==="svg"){
+    const art = SVG_ART[card.term] || SVG_ART[card.def];
+    if(art){
+      return `<span class="art" style="width:${dim}px;height:${dim}px;display:inline-block">${art}</span>`;
+    }
+  }
+  // 2. color swatch (drawn, no file needed)
+  if(card.swatch){
+    const stroke = card.swatch.toLowerCase()==="#fbfaf6" ? "var(--line)" : "transparent";
+    return `<span class="swatch" style="width:${dim}px;height:${dim}px;background:${esc(card.swatch)};border:2px solid ${stroke}"></span>`;
+  }
+  // 3. external image file
+  if(card.img){
+    return `<img class="card-img" src="images/${esc(card.img)}" alt="${esc(card.def)}" />`;
+  }
+  // 4. plain text definition
+  return `<span class="${size==='lg'?'def-lg':''}">${esc(card.def)}</span>`;
+}
+/* does this set show a visual (illustration or swatch) on the meaning side? */
+function setIsVisual(set){
+  return set.type==="image" || set.type==="color";
+}
+
+/* ---- FLASHCARDS ---- */
+function renderFlash(){
+  const set=SETS.find(s=>s.id===STATE.setId);
+  const order=shuffle(set.cards);
+  let i=0,flipped=false,know=0,learn=0;
+
+  function draw(){
+    const card=order[i];
+    app.innerHTML=`
+      <div class="topbar">
+        <span class="label">Card ${i+1} of ${order.length}</span>
+        <button class="exit" onclick='go({name:"modes",setId:"${set.id}"})'>✕ Exit</button>
+      </div>
+      <div class="bar"><i style="width:${(i/order.length)*100}%"></i></div>
+      <div class="flip-outer" id="flip-outer">
+        <div class="flip" id="flip">
+          <div class="face front">
+            <span class="kicker" style="color:var(--dim)">Word</span>
+            <span class="term-lg">${esc(card.term)}</span>
+            <span style="margin-top:20px;font-size:12.5px;color:var(--dim)">tap to flip</span>
+          </div>
+          <div class="face back">
+            <span class="kicker" style="color:rgba(255,255,255,.7)">Meaning</span>
+            ${meaningHTML(card,"lg")}
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <button class="btn btn-learn" id="b-learn">Still learning</button>
+        <button class="btn btn-know" id="b-know">I know this</button>
+      </div>`;
+    $("flip-outer").onclick=()=>{flipped=!flipped;$("flip").classList.toggle("on",flipped);};
+    $("b-learn").onclick=()=>mark(false);
+    $("b-know").onclick=()=>mark(true);
+  }
+  function mark(knows){
+    bumpProg(set.id,order[i].term,knows);
+    knows?know++:learn++;
+    if(i+1>=order.length){
+      showResult({
+        title:"Flashcards complete",
+        lines:[`${know} marked as known`,`${learn} still learning`],
+        setId:set.id,
+      });
+    } else {
+      flipped=false;i++;draw();
+    }
+  }
+  draw();
+}
+
+/* ---- QUIZ ---- */
+function renderQuiz(){
+  const set=SETS.find(s=>s.id===STATE.setId);
+  const order=shuffle(set.cards);
+  const optionSets=order.map(c=>{
+    const wrong=shuffle(set.cards.filter(x=>x.term!==c.term)).slice(0,3);
+    return shuffle([c,...wrong]);
+  });
+  let i=0,score=0,picked=false;
+
+  function draw(){
+    const card=order[i],opts=optionSets[i];
+    let optsHtml="";
+    opts.forEach((o,idx)=>{
+      optsHtml+=`<button class="opt" id="opt-${idx}" data-term="${esc(o.term)}">${optLabel(o)}</button>`;
+    });
+    app.innerHTML=`
+      <div class="topbar">
+        <span class="label">Question ${i+1} of ${order.length}</span>
+        <button class="exit" onclick='go({name:"modes",setId:"${set.id}"})'>✕ Exit</button>
+      </div>
+      <div class="bar"><i style="width:${(i/order.length)*100}%;background:var(--clay)"></i></div>
+      <div class="qcard rise">
+        <span class="kicker" style="color:var(--dim)">${setIsVisual(set)?"Which picture matches this word?":"What does this word mean?"}</span>
+        <div class="qword">${esc(card.term)}</div>
+        <div class="opts">${optsHtml}</div>
+      </div>
+      <div id="next-slot"></div>`;
+    opts.forEach((o,idx)=>{ $("opt-"+idx).onclick=()=>choose(idx,opts); });
+  }
+  function optLabel(o){
+    if(setIsVisual(set)){
+      return meaningHTML(o,"md");
+    }
+    return esc(o.def);
+  }
+  function choose(idx,opts){
+    if(picked)return;
+    picked=true;
+    const chosen=opts[idx],card=order[i];
+    const correct=chosen.term===card.term;
+    if(correct)score++;
+    bumpProg(set.id,card.term,correct);
+    opts.forEach((o,k)=>{
+      const el=$("opt-"+k);
+      if(o.term===card.term){el.classList.add("correct");el.innerHTML+=' <span class="tick">✓</span>';}
+      else if(k===idx){el.classList.add("wrong");el.innerHTML+=' <span class="tick">✕</span>';}
+    });
+    const last=i+1>=order.length;
+    $("next-slot").innerHTML=`<button class="btn-dark rise" id="next-btn">${last?"See results":"Next question"}</button>`;
+    $("next-btn").onclick=()=>{
+      if(last){
+        showResult({
+          title:"Quiz complete",
+          lines:[`You scored ${score} out of ${order.length}`],
+          setId:set.id,
+          report:{setName:set.name,scoreText:score+"/"+order.length},
+        });
+      } else { picked=false;i++;draw(); }
+    };
+  }
+  draw();
+}
+
+/* ---- MATCHING ---- */
+function renderMatch(){
+  const set=SETS.find(s=>s.id===STATE.setId);
+  const pool=shuffle(set.cards).slice(0,Math.min(6,set.cards.length));
+  const terms=shuffle(pool),defs=shuffle(pool);
+  let selTerm=null,selDef=null,matched={},lock=false,ticks=0;
+  const timer=setInterval(()=>{ticks++;const t=$("match-time");if(t)t.textContent=ticks+"s";},1000);
+
+  function draw(){
+    let tHtml="",dHtml="";
+    terms.forEach((c,idx)=>{
+      const cls="tile term"+(matched[c.term]?" matched":"")+(selTerm===c.term?" sel":"");
+      tHtml+=`<button class="${cls}" id="t-${idx}" ${matched[c.term]?"disabled":""}>${esc(c.term)}</button>`;
+    });
+    defs.forEach((c,idx)=>{
+      const cls="tile def"+(matched[c.term]?" matched":"")+(selDef===c.term?" sel":"");
+      const inner=setIsVisual(set) ? meaningHTML(c,"sm") : esc(c.def);
+      dHtml+=`<button class="${cls}" id="d-${idx}" ${matched[c.term]?"disabled":""}>${inner}</button>`;
+    });
+    app.innerHTML=`
+      <div class="topbar">
+        <span class="label">${Object.keys(matched).length} of ${pool.length} matched · <span id="match-time">${ticks}s</span></span>
+        <button class="exit" onclick='exitMatch("${set.id}")'>✕ Exit</button>
+      </div>
+      <p class="lead" style="margin:14px 0 4px;font-size:13.5px">Tap a word, then tap its meaning. Wrong pairs flash and reset.</p>
+      <div class="match-grid">
+        <div class="match-col">${tHtml}</div>
+        <div class="match-col">${dHtml}</div>
+      </div>`;
+    terms.forEach((c,idx)=>{ const el=$("t-"+idx); if(el&&!matched[c.term]) el.onclick=()=>pick("term",c.term); });
+    defs.forEach((c,idx)=>{ const el=$("d-"+idx); if(el&&!matched[c.term]) el.onclick=()=>pick("def",c.term); });
+  }
+  function pick(kind,term){
+    if(lock)return;
+    if(kind==="term")selTerm=term; else selDef=term;
+    draw();
+    if(selTerm&&selDef){
+      if(selTerm===selDef){
+        matched[selTerm]=true;
+        bumpProg(set.id,selTerm,true);
+        selTerm=selDef=null;
+        if(Object.keys(matched).length===pool.length){
+          clearInterval(timer);
+          showResult({
+            title:"All matched",
+            lines:[`Finished in ${ticks} second${ticks===1?"":"s"}`,`${pool.length} pairs`],
+            setId:set.id,
+          });
+          return;
+        }
+        draw();
+      } else {
+        lock=true;
+        const ti=terms.findIndex(c=>c.term===selTerm);
+        const di=defs.findIndex(c=>c.term===selDef);
+        if($("t-"+ti))$("t-"+ti).classList.add("bad");
+        if($("d-"+di))$("d-"+di).classList.add("bad");
+        setTimeout(()=>{selTerm=selDef=null;lock=false;draw();},560);
+      }
+    }
+  }
+  window.exitMatch=(id)=>{clearInterval(timer);go({name:"modes",setId:id});};
+  draw();
+}
+
+/* ---- RESULT ---- */
+function showResult(o){
+  if(o.report) reportScore(o.report.setName,o.report.scoreText);
+  let nameField="";
+  if(FORM_CONFIG.enabled&&o.report){
+    nameField=`<div style="margin:18px auto 0;max-width:300px;text-align:left">
+      <label style="font-size:12.5px;color:var(--dim);font-weight:600">Your name (so your teacher sees this)</label>
+      <input class="name-input" id="stu-name" placeholder="Type your name"
+        value="${esc(window.__studentName||"")}" />
+    </div>`;
+  }
+  let lines=o.lines.map(l=>`<p>${esc(l)}</p>`).join("");
+  app.innerHTML=`<div class="result rise">
+    <div class="check">✓</div>
+    <h2>${esc(o.title)}</h2>
+    ${lines}
+    ${nameField}
+    <button class="btn-dark" style="max-width:300px;margin:24px auto 0" onclick='go({name:"modes",setId:"${o.setId}"})'>Back to study modes</button>
+    <div><button class="reset" onclick='go({name:"home"})'>Choose a different set</button></div>
+  </div>`;
+  if(FORM_CONFIG.enabled&&o.report){
+    const ni=$("stu-name");
+    if(ni) ni.oninput=()=>{window.__studentName=ni.value;};
+  }
+}
+
+/* ---- start ---- */
+render();
+</script>
+</body>
+</html>
